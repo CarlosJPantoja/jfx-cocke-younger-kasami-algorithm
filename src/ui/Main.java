@@ -1,6 +1,6 @@
 /**
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- * @Authors: Carlos Jimmy Pantoja and Juan Esteban Caicedo
+ * @Authors: Juan Esteban Caicedo and Carlos Jimmy Pantoja.
  * @Date: May, 15th 2022
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */

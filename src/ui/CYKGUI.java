@@ -1,22 +1,51 @@
+/**
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * @Authors: Juan Esteban Caicedo and Carlos Jimmy Pantoja.
+ * @Date: May, 15th 2022
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
 package ui;
 
 import com.jfoenix.controls.JFXTextField;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import model.CYK;
 
 public class CYKGUI {
 
+	// -----------------------------------------------------------------
+	// Attributes
+	// -----------------------------------------------------------------
+
 	@FXML
 	private VBox mainVBox;
+
 	@FXML
-	private GridPane gridpane;
+	private GridPane gridPane;
+
 	@FXML
 	private JFXTextField productions1;
+
+	@FXML
+	private JFXTextField string;
+
+	// -----------------------------------------------------------------
+	// Relations
+	// -----------------------------------------------------------------
+
+	private CYK cyk;
+
+	// -----------------------------------------------------------------
+	// Methods
+	// -----------------------------------------------------------------
+
+	public CYKGUI() {
+		cyk = new CYK(string.getText());
+	}
 
 	@FXML
 	public void verifyProductions(KeyEvent event) {
@@ -26,48 +55,47 @@ public class CYKGUI {
 		String st = event.getCharacter();
 		char ch = st.charAt(0);
 		boolean consume = true;
-		if(Character.isAlphabetic(ch) || st.equals("|") || st.equals("&")) {
-			if(lg==0) {
-				if(!st.equals("|") && !st.equals("&"))
+		if (Character.isAlphabetic(ch) || st.equals("|") || st.equals("&")) {
+			if (lg == 0) {
+				if (!st.equals("|") && !st.equals("&"))
 					consume = false;
-			} else if(lg==1){
-				char lc = txt.charAt(lg-1);
-				if(Character.isUpperCase(lc)) {
-					if(Character.isUpperCase(ch))
+			} else if (lg == 1) {
+				char lc = txt.charAt(lg - 1);
+				if (Character.isUpperCase(lc)) {
+					if (Character.isUpperCase(ch))
 						consume = false;
-				} else if(st.equals("|"))
+				} else if (st.equals("|"))
 					consume = false;
 			} else {
-				char lc = txt.charAt(lg-1);
-				char pu = txt.charAt(lg-2);
-				if(Character.isLowerCase(ch) && "|".equals(lc+""))
+				char lc = txt.charAt(lg - 1);
+				char pu = txt.charAt(lg - 2);
+				if (Character.isLowerCase(ch) && "|".equals(lc + ""))
 					consume = false;
-				else if(Character.isUpperCase(ch)) {
-					if(Character.isUpperCase(lc) && !Character.isUpperCase(pu))
+				else if (Character.isUpperCase(ch)) {
+					if (Character.isUpperCase(lc) && !Character.isUpperCase(pu))
 						consume = false;
-					else if("|".equals(lc+""))
+					else if ("|".equals(lc + ""))
 						consume = false;
-				} else if(st.equals("&") && "|".equals(lc+""))
+				} else if (st.equals("&") && "|".equals(lc + ""))
 					consume = false;
-				else if(st.equals("|") && !"|".equals(lc+""))
+				else if (st.equals("|") && !"|".equals(lc + ""))
 					consume = false;
 			}
 		}
-		if(consume)
+		if (consume)
 			event.consume();
 	}
-	
+
 	public void initialize() {
 		productions1.caretPositionProperty().addListener(new ChangeListener<Number>() {
 
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				if(Integer.parseInt(newValue+"") != productions1.getText().length()) {
-						System.out.println("old: "+oldValue+", new: "+newValue);
-						productions1.positionCaret(productions1.getText().length());
+				if (Integer.parseInt(newValue + "") != productions1.getText().length()) {
+					System.out.println("old: " + oldValue + ", new: " + newValue);
+					productions1.positionCaret(productions1.getText().length());
 				}
 			}
-			
 		});
 	}
 }
