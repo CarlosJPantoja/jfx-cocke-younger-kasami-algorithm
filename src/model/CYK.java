@@ -104,6 +104,15 @@ public class CYK {
         }
         if (string.length() <= 1)
             return table;
+        // Fill CYK table when j = 2.
+        for (int j = 0; j < table[2].length; j++) {
+            String[] x2minus1j = table[1][j].split(", ");
+            String[] x2minus1jPlus1 = table[1][j + 1].split(", ");
+            String[] variablesProducers = getVariablesThatProduce(combineCells(x2minus1j, x2minus1jPlus1));
+            table[2][j] = giveFormat(variablesProducers);
+        }
+        if (string.length() <= 2)
+            return table;
         return table;
     }
 
@@ -125,5 +134,20 @@ public class CYK {
     private String giveFormat(String[] input) {
         String format = Arrays.toString(input).replaceAll("[\\[\\]\\,]", ",");
         return format.substring(1, format.length()).substring(0, format.length() - 2);
+    }
+
+    private String[] combineCells(String[] xij1, String[] xij2) {
+        int lengthAllVariablesProducers = xij1.length * xij2.length;
+        int combination = 0;
+        String[] combinations = new String[lengthAllVariablesProducers];
+        if (lengthAllVariablesProducers == 0)
+            return combinations;
+        for (int i = 0; i < xij1.length; i++) {
+            for (int j = 0; j < xij2.length; j++) {
+                combinations[combination] = xij1[i] + xij2[j];
+                combination++;
+            }
+        }
+        return combinations;
     }
 }
