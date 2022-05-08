@@ -31,7 +31,6 @@ public class CYK {
 
     public boolean checkStringGeneration(String string) {
         this.string = string;
-        fillGrammar();
         String[][] table = cykAlgorithm(buildTableCYK(string));
         if (table[table.length - 1][table[table.length - 1].length - 1].contains(INITIAL_VARIABLE))
             return true;
@@ -39,43 +38,9 @@ public class CYK {
             return false;
     }
 
-    private void fillGrammar() { // MUST BE MODIFIED
-        ArrayList<String> prod1 = new ArrayList<>();
-        prod1.add("IB");
-        grammar.put('S', prod1);
-        ArrayList<String> prod2 = new ArrayList<>();
-        prod2.add("AX");
-        prod2.add("AJ");
-        prod2.add("a");
-        grammar.put('I', prod2);
-        ArrayList<String> prod3 = new ArrayList<>();
-        prod3.add("YZ");
-        prod3.add("BZ");
-        prod3.add("AK");
-        prod3.add("a");
-        grammar.put('J', prod3);
-        ArrayList<String> prod4 = new ArrayList<>();
-        prod4.add("AK");
-        prod4.add("a");
-        grammar.put('K', prod4);
-        ArrayList<String> prod5 = new ArrayList<>();
-        prod5.add("a");
-        grammar.put('A', prod5);
-        ArrayList<String> prod6 = new ArrayList<>();
-        prod6.add("b");
-        grammar.put('B', prod6);
-        ArrayList<String> prod7 = new ArrayList<>();
-        prod7.add("c");
-        grammar.put('C', prod7);
-        ArrayList<String> prod8 = new ArrayList<>();
-        prod8.add("IA");
-        grammar.put('X', prod8);
-        ArrayList<String> prod9 = new ArrayList<>();
-        prod9.add("BJ");
-        grammar.put('Y', prod9);
-        ArrayList<String> prod10 = new ArrayList<>();
-        prod10.add("CC");
-        grammar.put('Z', prod10);
+    public void fillGrammar(ArrayList<Character> nonTerminals, ArrayList<ArrayList<String>> productions) { // MUST BE MODIFIED
+        for(int i=0; i<nonTerminals.size(); i++)
+        	grammar.put(nonTerminals.get(i), productions.get(i));
     }
 
     private String[][] buildTableCYK(String string) {
