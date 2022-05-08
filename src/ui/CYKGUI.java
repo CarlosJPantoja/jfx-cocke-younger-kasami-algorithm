@@ -10,6 +10,7 @@ import com.jfoenix.controls.JFXTextField;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -33,6 +34,9 @@ public class CYKGUI {
 	@FXML
 	private JFXTextField string;
 
+	@FXML
+	private Label result;
+
 	// -----------------------------------------------------------------
 	// Relations
 	// -----------------------------------------------------------------
@@ -44,7 +48,16 @@ public class CYKGUI {
 	// -----------------------------------------------------------------
 
 	public CYKGUI() {
-		cyk = new CYK(string.getText());
+		cyk = new CYK();
+	}
+
+	@FXML
+	public void doCYKAlgorithm() {
+		boolean isGenerated = cyk.checkStringGeneration(string.getText());
+		if (isGenerated)
+			result.setText("True");
+		else
+			result.setText("False");
 	}
 
 	@FXML
