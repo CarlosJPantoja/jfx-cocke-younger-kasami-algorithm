@@ -3,7 +3,7 @@
  * @Authors: Juan Esteban Caicedo and Carlos Jimmy Pantoja.
  * @Date: May, 15th 2022
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
+ */
 package ui;
 
 import java.util.ArrayList;
@@ -26,10 +26,8 @@ public class CYKGUI {
 
 	@FXML
 	private VBox mainVBox;
-
 	@FXML
 	private GridPane gridPane;
-
 	@FXML
 	private Label result;
 
@@ -52,7 +50,7 @@ public class CYKGUI {
 		alphabet = new ArrayList<>();
 		cyk = new CYK();
 	}
-	
+
 	@FXML
 	public void doCYKAlgorithm() {
 		ArrayList<Character> nonTerminals = obtainNonTerminals();
@@ -64,7 +62,7 @@ public class CYKGUI {
 		else
 			result.setText("False");
 	}
-	
+
 	private ArrayList<ArrayList<String>> obtainProductions() {
 		ArrayList<ArrayList<String>> productions = new ArrayList<>();
 		for(int i=0; i<grammar.size(); i++) {
@@ -91,12 +89,65 @@ public class CYKGUI {
 	public void initialize() {
 		autoGenerateSpace('S', 0);
 		string = configureNewTextField();
-		additionalsStringProperties(string);
-		mainVBox.getChildren().set(4, string);
+		additionalStringProperties(string);
+		mainVBox.getChildren().add(4, string);
+	}
+
+	private void rebuildGridPane() {
+		alphabet = new ArrayList<>();
+		for(int i=0; i<grammar.size(); i++) {
+			if(!existInProductions(((Label)grammar.get(i)[0]).getText().charAt(0)) && i!=0) {
+				gridPane.getChildren().remove(grammar.get(i)[0]);
+				gridPane.getChildren().remove(grammar.get(i)[1]);
+				grammar.remove(i);
+				i--;
+			} else
+				updateAlphabet((JFXTextField)grammar.get(i)[1]);
+		}
+		checkString();
+	}
+
+	private void checkString() {
+		String alph = "", str = "";
+		for(Character temp: alphabet)
+			alph += temp;
+		String[] letters = string.getText().split("|");
+		for(String letter: letters) {
+			if(alph.contains(letter))
+				str += letter;
+		}
+		string.setText(str);
+	}
+
+	private void updateAlphabet(JFXTextField tf) {
+		String[] letters = tf.getText().split("\\|");
+		for(int i=0; i<letters.length; i++) {
+			if(letters[i].length()==1 && letters[i].charAt(0)!='&')
+				updateAlphabet(letters[i].charAt(0));
+		}
+	}
+
+	private void updateAlphabet(char letter) {
+		for(int i=0; i<alphabet.size(); i++) {
+			if(letter == alphabet.get(i))
+				return;
+		}
+		alphabet.add(letter);
+	}
+
+	private boolean existInProductions(char letter) {
+		for(int i=0; i<grammar.size(); i++) {
+			String[] letters = ((JFXTextField)grammar.get(i)[1]).getText().split("|");
+			for(int j=0; j<letters.length; j++) {
+				if(letters[j].equals(letter+""))
+					return true;
+			}
+		}
+		return false;
 	}
 
 	private JFXTextField configureNewTextField() {
-		JFXTextField tf = new JFXTextField() {
+		JFXTextField tf = new JFXTextField("") {
 			@Override
 			public void cut() {}
 			@Override
@@ -118,8 +169,8 @@ public class CYKGUI {
 		tf.setMaxSize(JFXTextField.USE_PREF_SIZE, JFXTextField.USE_PREF_SIZE);
 		return tf;
 	}
-	
-	private void additionalsProductionsProperties(JFXTextField tf) {
+
+	private void additionalProductionsProperties(JFXTextField tf) {
 		tf.focusedProperty().addListener((observable, oldValue, newValue) -> {
 			checkEndProductions(tf);
 			checkRepeatedProductions(tf);
@@ -131,6 +182,7 @@ public class CYKGUI {
 						autoGenerateSpace(letter, grammar.size());
 				}
 			}
+			rebuildGridPane();
 		});
 		tf.setOnKeyTyped(new EventHandler<KeyEvent>() {
 			@Override
@@ -139,8 +191,8 @@ public class CYKGUI {
 			}
 		});
 	}
-	
-	private void additionalsStringProperties(JFXTextField tf) {
+
+	private void additionalStringProperties(JFXTextField tf) {
 		tf.setOnKeyTyped(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
@@ -171,25 +223,13 @@ public class CYKGUI {
 				}
 			}
 			String text = productions[0];
-			if(productions[0].length()==1 && productions[0].charAt(0)!='&')
-				updateAlphabet(productions[0].charAt(0));
 			for(int i=1; i<productions.length; i++) {
 				if(productions[i]!=null) {
 					text += "|"+productions[i];
-					if(productions[i].length()==1 && productions[i].charAt(0)!='&')
-						updateAlphabet(productions[i].charAt(0));
 				}
 			}
 			tf.setText(text);
 		}
-	}
-
-	private void updateAlphabet(char letter) {
-		for(int i=0; i<alphabet.size(); i++) {
-			if(letter == alphabet.get(i))
-				return;
-		}
-		alphabet.add(letter);
 	}
 
 	private void checkEndProductions(JFXTextField tf) {
@@ -197,9 +237,9 @@ public class CYKGUI {
 			int lg = tf.getText().length();
 			if(lg==1 && Character.isUpperCase(tf.getText().charAt(0)))
 				tf.setText("");
-			if(lg>1 && tf.getText().charAt(lg-1)=='|')
+			else if(lg>1 && tf.getText().charAt(lg-1)=='|')
 				tf.setText(tf.getText().substring(0, lg-1));
-			if(lg>2 && Character.isUpperCase(tf.getText().charAt(lg-1)) 
+			else if(lg>2 && Character.isUpperCase(tf.getText().charAt(lg-1)) 
 					&& tf.getText().charAt(lg-2)=='|')
 				tf.setText(tf.getText().substring(0, lg-2));
 		}
@@ -208,7 +248,7 @@ public class CYKGUI {
 	private void autoGenerateSpace(char letter, int row) {
 		Label lb = nonTerminalLabel(letter);
 		JFXTextField tf = configureNewTextField();
-		additionalsProductionsProperties(tf);
+		additionalProductionsProperties(tf);
 		gridPane.add(lb, 0, row);
 		gridPane.add(tf, 1, row);
 		Control[] controls = new Control[2];
@@ -217,7 +257,7 @@ public class CYKGUI {
 		grammar.add(controls);
 		mainVBox.getChildren().set(2, gridPane);
 	}
-	
+
 	private boolean containsInGrammar(char letter) {
 		for(int i=0; i<grammar.size(); i++) {
 			Label lb = (Label) grammar.get(i)[0];
@@ -236,39 +276,42 @@ public class CYKGUI {
 	private <Type extends Control> void setStyle(Type control) {
 		control.setStyle("-fx-font-family: Consolas; -fx-font-size: 24px");
 	}
-	
-	public void verifyProductions(JFXTextField tf, KeyEvent event) {
-		String txt = tf.getText();
-		int lg = txt.length();
-		String st = event.getCharacter();
-		char ch = st.charAt(0);
+
+	private void verifyProductions(JFXTextField textField, KeyEvent event) {
+		String oldText = textField.getText();
+		int oldLength = oldText.length();
+		if(event.getCharacter().length()!=1)
+			return;
+		char newCharacter = event.getCharacter().charAt(0);
 		boolean consume = true;
-		if ((Character.isAlphabetic(ch) || st.equals("|") || st.equals("&")) 
-				&& !st.equals("S")) {
-			if (lg == 0) {
-				if (!st.equals("|"))
+		if ((Character.isAlphabetic(newCharacter) || (newCharacter == '|') || (newCharacter == '&')) && (newCharacter != 'S')) {
+			if (oldLength == 0) {
+				if (newCharacter != '|')
 					consume = false;
-			} else if (lg == 1) {
-				char lc = txt.charAt(lg - 1);
-				if (Character.isUpperCase(lc)) {
-					if (Character.isUpperCase(ch))
+			} else if (oldLength == 1) {
+				char lastOldCharacter = oldText.charAt(oldLength - 1);
+				if (Character.isUpperCase(lastOldCharacter)) {
+					if (Character.isUpperCase(newCharacter))
 						consume = false;
-				} else if (st.equals("|"))
+				} else if (newCharacter == '|')
 					consume = false;
 			} else {
-				char lc = txt.charAt(lg - 1);
-				char pu = txt.charAt(lg - 2);
-				if (Character.isLowerCase(ch) && "|".equals(lc + ""))
+				char lastOldCharacter = oldText.charAt(oldLength - 1);
+				char penultimateOldCharacter = oldText.charAt(oldLength - 2);
+				if (Character.isLowerCase(newCharacter) && (lastOldCharacter == '|'))
 					consume = false;
-				else if (Character.isUpperCase(ch)) {
-					if (Character.isUpperCase(lc) && !Character.isUpperCase(pu))
+				else if (Character.isUpperCase(newCharacter)) {
+					if (Character.isUpperCase(lastOldCharacter) && !Character.isUpperCase(penultimateOldCharacter))
 						consume = false;
-					else if ("|".equals(lc + ""))
+					else if (lastOldCharacter == '|')
 						consume = false;
-				} else if (st.equals("&") && "|".equals(lc + ""))
+				} else if ((newCharacter == '&') && (lastOldCharacter == '|'))
 					consume = false;
-				else if (st.equals("|") && !"|".equals(lc + ""))
+				else if ((newCharacter == '|') && (lastOldCharacter != '|')) {
 					consume = false;
+					if (Character.isUpperCase(lastOldCharacter) && !Character.isUpperCase(penultimateOldCharacter))
+						consume = true;
+				}
 			}
 		}
 		if (consume)
