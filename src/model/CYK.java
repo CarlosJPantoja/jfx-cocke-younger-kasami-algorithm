@@ -8,7 +8,9 @@ package model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Set;
 
 public class CYK {
 
@@ -38,9 +40,9 @@ public class CYK {
             return false;
     }
 
-    public void fillGrammar(ArrayList<Character> nonTerminals, ArrayList<ArrayList<String>> productions) { // MUST BE MODIFIED
-        for(int i=0; i<nonTerminals.size(); i++)
-        	grammar.put(nonTerminals.get(i), productions.get(i));
+    public void fillGrammar(ArrayList<Character> nonTerminals, ArrayList<ArrayList<String>> productions) {
+        for (int i = 0; i < nonTerminals.size(); i++)
+            grammar.put(nonTerminals.get(i), productions.get(i));
     }
 
     private String[][] buildTableCYK(String string) {
@@ -55,15 +57,15 @@ public class CYK {
         return table;
     }
 
-    private String[][] cykAlgorithm(String[][] table) { // NOT FINISHED YET
+    private String[][] cykAlgorithm(String[][] table) {
         // Fill characters string in the CYK table.
         for (int j = 0; j < table[0].length; j++) {
             table[0][j] = String.valueOf(string.charAt(j));
         }
         // Fill CYK table when j = 1.
         for (int j = 0; j < table[1].length; j++) {
-            String[] substring = new String[table[0][j].length()];
-            substring[j] = table[0][j];
+            String[] substring = new String[1];
+            substring[0] = table[0][j];
             String[] variablesProducers = getVariablesThatProduce(substring);
             table[1][j] = giveFormat(variablesProducers);
         }
@@ -78,15 +80,39 @@ public class CYK {
         }
         if (string.length() <= 2)
             return table;
+        // Fill CYK table when j > 2.
+        Set<String> setOfVariablesProducers = new HashSet<>();
+        for (int i = 3; i < table.length; i++) {
+            for (int j = 0; j < table[i].length; j++) {
+                for (int k = 1; k < i; k++) {
+                    String[] xij1 = table[k][j].split(", ");
+                    String[] xij2 = table[i - k][j + k].split(", ");
+                    String[] combinations = combineCells(xij1, xij2);
+                    String[] variablesProducers = getVariablesThatProduce(combinations);
+                    if (table[i][j].isEmpty())
+                        table[i][j] = giveFormat(variablesProducers);
+                    else {
+                        String[] variablesRepeated = table[i][j].split(", ");
+                        ArrayList<String> variablesRepeatedAndFull = new ArrayList<String>(
+                                Arrays.asList(variablesRepeated));
+                        variablesRepeatedAndFull.addAll(Arrays.asList(variablesProducers));
+                        setOfVariablesProducers.addAll(variablesRepeatedAndFull);
+                        table[i][j] = giveFormat(
+                                setOfVariablesProducers.toArray(new String[setOfVariablesProducers.size()]));
+                    }
+                }
+                setOfVariablesProducers.clear();
+            }
+        }
         return table;
     }
 
     private String[] getVariablesThatProduce(String[] combinations) {
-        ArrayList<Character> variablesProducers = new ArrayList<>();
+        ArrayList<String> variablesProducers = new ArrayList<>();
         for (Character variable : grammar.keySet()) {
             for (String production : combinations) {
                 if (grammar.get(variable).contains(production))
-                    variablesProducers.add(variable);
+                    variablesProducers.add(String.valueOf(variable));
             }
         }
         if (variablesProducers.size() == 0) {
