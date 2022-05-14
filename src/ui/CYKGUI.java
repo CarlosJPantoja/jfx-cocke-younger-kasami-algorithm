@@ -7,7 +7,6 @@
 package ui;
 
 import java.util.ArrayList;
-
 import com.jfoenix.controls.JFXTextField;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -27,13 +26,17 @@ public class CYKGUI {
 
 	@FXML
 	private VBox mainVBox;
+
 	@FXML
 	private GridPane gridPane;
+
 	@FXML
 	private Label result;
 
 	private JFXTextField string;
+
 	private ArrayList<Control[]> grammar;
+
 	private ArrayList<Character> alphabet;
 
 	// -----------------------------------------------------------------
@@ -61,14 +64,17 @@ public class CYKGUI {
 			boolean isGenerated = cyk.checkStringGeneration(string.getText());
 			if (isGenerated) {
 				result.setText("True");
-				result.setStyle("-fx-font-family: Consolas; -fx-font-size: 24px; -fx-text-fill: green; -fx-font-weight: bold");
+				result.setStyle(
+						"-fx-font-family: Consolas; -fx-font-size: 24px; -fx-text-fill: green; -fx-font-weight: bold");
 			} else {
 				result.setText("False");
-				result.setStyle("-fx-font-family: Consolas; -fx-font-size: 24px; -fx-text-fill: red; -fx-font-weight: bold");
+				result.setStyle(
+						"-fx-font-family: Consolas; -fx-font-size: 24px; -fx-text-fill: red; -fx-font-weight: bold");
 			}
 		} else {
 			result.setText("The string is empty!");
-			result.setStyle("-fx-font-family: Consolas; -fx-font-size: 24px; -fx-text-fill: #d4af37; -fx-font-weight: bold");
+			result.setStyle(
+					"-fx-font-family: Consolas; -fx-font-size: 24px; -fx-text-fill: #d4af37; -fx-font-weight: bold");
 		}
 	}
 
@@ -157,6 +163,7 @@ public class CYKGUI {
 
 	private JFXTextField configureNewTextField() {
 		JFXTextField tf = new JFXTextField("") {
+
 			@Override
 			public void cut() {
 			}
