@@ -1,0 +1,69 @@
+.scroll-pane .viewport{
+	-fx-alignment: CENTER;
+	-fx-background-color: white;
+}
+
+.scroll-pane{
+	-fx-background-color: white;
+}
+
+.scroll-pane .scroll-bar:vertical .track-background{
+	-fx-background-color: white;
+}
+
+.scroll-pane .scroll-bar:vertical .increment-button .increment-arrow{
+	-fx-background-color: black;
+}
+
+.scroll-pane .scroll-bar:vertical .increment-button{
+	-fx-background-color: white;
+}
+
+.scroll-pane .scroll-bar:vertical .decrement-button .decrement-arrow{
+	-fx-background-color: black;
+}
+
+.scroll-pane .scroll-bar:vertical .decrement-button{
+	-fx-background-color: white;
+}
+
+.scroll-pane .scroll-bar:vertical .track{
+	-fx-background-color: white;
+}
+
+.scroll-pane .scroll-bar:vertical .thumb{
+	-fx-background-color: black;
+	-fx-border-color: black;
+}
+
+
+
+
+.scroll-pane .scroll-bar:horizontal .track-background{
+	-fx-background-color: white;
+}
+
+.scroll-pane .scroll-bar:horizontal .increment-button .increment-arrow{
+	-fx-background-color: black;
+}
+
+.scroll-pane .scroll-bar:horizontal .increment-button{
+	-fx-background-color: white;
+}
+
+.scroll-pane .scroll-bar:horizontal .decrement-button .decrement-arrow{
+	-fx-background-color: black;
+}
+
+.scroll-pane .scroll-bar:horizontal .decrement-button{
+	-fx-background-color: white;
+}
+
+.scroll-pane .scroll-bar:horizontal .track{
+	-fx-background-color: white;
+}
+
+.scroll-pane .scroll-bar:horizontal .thumb{
+	-fx-background-color: black;
+	-fx-border-color: black;
+}

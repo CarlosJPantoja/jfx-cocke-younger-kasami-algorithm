@@ -115,24 +115,19 @@ public class CYK {
                     variablesProducers.add(String.valueOf(variable));
             }
         }
-        if (variablesProducers.size() == 0) {
-            return new String[0];
-        }
         String[] varProducers = new String[variablesProducers.size()];
         return variablesProducers.toArray(varProducers);
     }
 
     private String giveFormat(String[] input) {
         String format = Arrays.toString(input).replaceAll("[\\[\\]\\,]", ",");
-        return format.substring(1, format.length()).substring(0, format.length() - 2);
+        return format.substring(1, format.length() - 1);
     }
 
     private String[] combineCells(String[] xij1, String[] xij2) {
         int lengthAllVariablesProducers = xij1.length * xij2.length;
         int combination = 0;
         String[] combinations = new String[lengthAllVariablesProducers];
-        if (lengthAllVariablesProducers == 0)
-            return combinations;
         for (int i = 0; i < xij1.length; i++) {
             for (int j = 0; j < xij2.length; j++) {
                 combinations[combination] = xij1[i] + xij2[j];

@@ -25,7 +25,7 @@ public class CYKGUI {
 	// -----------------------------------------------------------------
 
 	@FXML
-	private VBox mainVBox;
+	private VBox mainVBox, grammarSpace;
 
 	@FXML
 	private GridPane gridPane;
@@ -38,6 +38,8 @@ public class CYKGUI {
 	private ArrayList<Control[]> grammar;
 
 	private ArrayList<Character> alphabet;
+
+	private int gap;
 
 	// -----------------------------------------------------------------
 	// Relations
@@ -53,28 +55,24 @@ public class CYKGUI {
 		grammar = new ArrayList<>();
 		alphabet = new ArrayList<>();
 		cyk = new CYK();
+		gap = 0;
 	}
 
 	@FXML
 	public void doCYKAlgorithm() {
 		ArrayList<Character> nonTerminals = obtainNonTerminals();
 		ArrayList<ArrayList<String>> productions = obtainProductions();
-		if (!string.getText().equals("")) {
-			cyk.fillGrammar(nonTerminals, productions);
-			boolean isGenerated = cyk.checkStringGeneration(string.getText());
-			if (isGenerated) {
-				result.setText("True");
-				result.setStyle(
-						"-fx-font-family: Consolas; -fx-font-size: 24px; -fx-text-fill: green; -fx-font-weight: bold");
-			} else {
-				result.setText("False");
-				result.setStyle(
-						"-fx-font-family: Consolas; -fx-font-size: 24px; -fx-text-fill: red; -fx-font-weight: bold");
-			}
-		} else {
-			result.setText("The string is empty!");
+		cyk.fillGrammar(nonTerminals, productions);
+		String data = string.getText().equals("") ? "&" : string.getText();
+		boolean isGenerated = cyk.checkStringGeneration(data);
+		if (isGenerated) {
+			result.setText(data+": True");
 			result.setStyle(
-					"-fx-font-family: Consolas; -fx-font-size: 24px; -fx-text-fill: #d4af37; -fx-font-weight: bold");
+					"-fx-font-family: Consolas; -fx-font-size: 24px; -fx-text-fill: green; -fx-font-weight: bold");
+		} else {
+			result.setText(data+": False");
+			result.setStyle(
+					"-fx-font-family: Consolas; -fx-font-size: 24px; -fx-text-fill: red; -fx-font-weight: bold");
 		}
 	}
 
@@ -102,10 +100,10 @@ public class CYKGUI {
 	}
 
 	public void initialize() {
-		autoGenerateSpace('S', 0);
 		string = configureNewTextField();
 		additionalStringProperties(string);
 		mainVBox.getChildren().add(4, string);
+		autoGenerateSpace('S', 0);
 	}
 
 	private void rebuildGridPane() {
@@ -115,6 +113,7 @@ public class CYKGUI {
 				gridPane.getChildren().remove(grammar.get(i)[0]);
 				gridPane.getChildren().remove(grammar.get(i)[1]);
 				grammar.remove(i);
+				gap++;
 				i--;
 			} else
 				updateAlphabet((JFXTextField) grammar.get(i)[1]);
@@ -286,13 +285,13 @@ public class CYKGUI {
 		Label lb = nonTerminalLabel(letter);
 		JFXTextField tf = configureNewTextField();
 		additionalProductionsProperties(tf);
-		gridPane.add(lb, 0, row);
-		gridPane.add(tf, 1, row);
+		gridPane.add(lb, 0, row + gap);
+		gridPane.add(tf, 1, row + gap);
 		Control[] controls = new Control[2];
 		controls[0] = lb;
 		controls[1] = tf;
 		grammar.add(controls);
-		mainVBox.getChildren().set(2, gridPane);
+		grammarSpace.getChildren().set(0, gridPane);
 	}
 
 	private boolean containsInGrammar(char letter) {
@@ -343,7 +342,7 @@ public class CYKGUI {
 						consume = false;
 					else if (lastOldCharacter == '|')
 						consume = false;
-				} else if ((newCharacter == '&') && (lastOldCharacter == '|'))
+				} else if ((newCharacter == '&') && (lastOldCharacter == '|') && grammar.get(0)[1].equals(textField))
 					consume = false;
 				else if ((newCharacter == '|') && (lastOldCharacter != '|')) {
 					consume = false;
