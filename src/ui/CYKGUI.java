@@ -277,8 +277,10 @@ public class CYKGUI {
 		tf.setOnKeyReleased(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
-				if (KeyCode.ENTER == event.getCode())
+				if (KeyCode.ENTER == event.getCode()) {
 					string.requestFocus();
+					((Control)event.getSource()).requestFocus();
+				}
 			}
 		});
 		tf.setOnKeyTyped(new EventHandler<KeyEvent>() {
