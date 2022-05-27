@@ -7,6 +7,8 @@
 package ui;
 
 import java.util.ArrayList;
+
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -32,6 +34,9 @@ public class CYKGUI {
 
 	@FXML
 	private Label result;
+	
+	@FXML
+    private JFXButton CYKButton;
 
 	private JFXTextField string;
 
@@ -52,9 +57,9 @@ public class CYKGUI {
 	// -----------------------------------------------------------------
 
 	/**
-     * Name: CYKGUI <br>
-     * <br> GUI constructor method. <br>
-    */
+	 * Name: CYKGUI <br>
+	 * <br> GUI constructor method. <br>
+	 */
 	public CYKGUI() {
 		grammar = new ArrayList<>();
 		alphabet = new ArrayList<>();
@@ -63,11 +68,11 @@ public class CYKGUI {
 	}
 
 	/**
-     * Name: doCYKAlgorithm <br>
-     * <br> Method used to begin the process of doing the CYK algorithm to a specified string with a specified CNF grammar. <br><br>
+	 * Name: doCYKAlgorithm <br>
+	 * <br> Method used to begin the process of doing the CYK algorithm to a specified string with a specified CNF grammar. <br><br>
 	 * <b>pre: </b> The user has already entered the grammar and the string in the GUI. <br><br>
 	 * <b>post: </b> The boolean result of applying the CYK algorithm is displayed in the GUI. <br>
-    */
+	 */
 	@FXML
 	public void doCYKAlgorithm() {
 		ArrayList<Character> nonTerminals = obtainNonTerminals();
@@ -85,16 +90,18 @@ public class CYKGUI {
 	}
 
 	/**
-     * Name: obtainProductions <br>
-     * <br> Private method used to get the productions of the grammar from the GUI. <br><br>
+	 * Name: obtainProductions <br>
+	 * <br> Private method used to get the productions of the grammar from the GUI. <br><br>
 	 * <b>pre: </b> The user has already entered all the grammar productions in the GUI. <br><br>
 	 * <b>post: </b> The productions of the grammar are obtained from the GUI. <br>
 	 * @return An ArrayList of ArrayList of String with the productions of the grammar specified in the GUI.
-    */
+	 */
 	private ArrayList<ArrayList<String>> obtainProductions() {
 		ArrayList<ArrayList<String>> productions = new ArrayList<>();
 		for (int i = 0; i < grammar.size(); i++) {
 			JFXTextField tf = (JFXTextField) grammar.get(i)[1];
+			if(tf.getText().equals(""))
+				return null;
 			String[] temp = tf.getText().split("\\|");
 			ArrayList<String> set = new ArrayList<>();
 			for (int j = 0; j < temp.length; j++) {
@@ -106,12 +113,12 @@ public class CYKGUI {
 	}
 
 	/**
-     * Name: obtainNonTerminals <br>
-     * <br> Private method used to get the non-terminals symbols of the grammar from the GUI. <br><br>
+	 * Name: obtainNonTerminals <br>
+	 * <br> Private method used to get the non-terminals symbols of the grammar from the GUI. <br><br>
 	 * <b>pre: </b> The user has already entered all the non-terminals symbols of the grammar in the GUI. <br><br>
 	 * <b>post: </b> The non-terminals symbols of the grammar are obtained from the GUI. <br>
 	 * @return An ArrayList of Character with the non-terminals symbols of the grammar specified in the GUI.
-    */
+	 */
 	private ArrayList<Character> obtainNonTerminals() {
 		ArrayList<Character> nonTerminals = new ArrayList<>();
 		for (int i = 0; i < grammar.size(); i++) {
@@ -122,10 +129,10 @@ public class CYKGUI {
 	}
 
 	/**
-     * Name: initialize <br>
-     * <br> GUI initializer method to configure initial parameters. <br><br>
+	 * Name: initialize <br>
+	 * <br> GUI initializer method to configure initial parameters. <br><br>
 	 * <b>post: </b> Initial parameters in the GUI are configured. <br>
-    */
+	 */
 	public void initialize() {
 		string = configureNewTextField();
 		additionalStringProperties(string);
@@ -134,14 +141,14 @@ public class CYKGUI {
 	}
 
 	/**
-     * Name: rebuildGridPane <br>
-     * <br>Private method used to rebuild the grammar in the GUI by removing the variables that aren't called anymore in some production. <br><br>
+	 * Name: rebuildGridPane <br>
+	 * <br>Private method used to rebuild the grammar in the GUI by removing the variables that aren't called anymore in some production. <br><br>
 	 * <b>post: </b> The variables that aren't called anymore in some production are removed. <br>
-    */
+	 */
 	private void rebuildGridPane() {
 		alphabet = new ArrayList<>();
 		for (int i = 0; i < grammar.size(); i++) {
-			if (!existInProductions(((Label) grammar.get(i)[0]).getText().charAt(0)) && i != 0) {
+			if (!existInProductions(((Label) grammar.get(i)[0]).getText().charAt(0), 'S')) {
 				gridPane.getChildren().remove(grammar.get(i)[0]);
 				gridPane.getChildren().remove(grammar.get(i)[1]);
 				grammar.remove(i);
@@ -154,10 +161,10 @@ public class CYKGUI {
 	}
 
 	/**
-     * Name: checkString <br>
-     * <br> Private method used to verify in the GUI that the string characters are present in the grammar productions after characters have been deleted in a text field. <br><br>
+	 * Name: checkString <br>
+	 * <br> Private method used to verify in the GUI that the string characters are present in the grammar productions after characters have been deleted in a text field. <br><br>
 	 * <b>post: </b> Verification of the presence of the string characters in the grammar productions is done. <br>
-    */
+	 */
 	private void checkString() {
 		String alph = "", str = "";
 		for (Character temp : alphabet)
@@ -171,11 +178,11 @@ public class CYKGUI {
 	}
 
 	/**
-     * Name: updateAlphabet <br>
-     * <br> Private method used to update the alphabet as lowercase letters are used in the grammar. <br><br>
+	 * Name: updateAlphabet <br>
+	 * <br> Private method used to update the alphabet as lowercase letters are used in the grammar. <br><br>
 	 * <b>post: </b> Update of the alphabet as lowercase letters are used in the grammar is done. <br>
 	 * @param tf - Text field from the GUI - tf = JFXTextField, tf != null
-    */
+	 */
 	private void updateAlphabet(JFXTextField tf) {
 		String[] letters = tf.getText().split("\\|");
 		for (int i = 0; i < letters.length; i++) {
@@ -185,11 +192,11 @@ public class CYKGUI {
 	}
 
 	/**
-     * Name: updateAlphabet <br>
-     * <br> Private method used to add a lowercase letter to the alphabet if it doesn't exist in the system. <br><br>
+	 * Name: updateAlphabet <br>
+	 * <br> Private method used to add a lowercase letter to the alphabet if it doesn't exist in the system. <br><br>
 	 * <b>post: </b> The addition or not of a lowercase letter to the alphabet is determined. <br>
 	 * @param letter - Non-terminal symbol - letter = char, tf != null
-    */
+	 */
 	private void updateAlphabet(char letter) {
 		for (int i = 0; i < alphabet.size(); i++) {
 			if (letter == alphabet.get(i))
@@ -199,30 +206,107 @@ public class CYKGUI {
 	}
 
 	/**
-     * Name: existInProductions <br>
-     * <br> Private method used to checks if there is a letter that is called in a production. <br><br>
+	 * Name: existInProductions <br>
+	 * <br> Private method used to check if there is a letter that is called in a production. <br><br>
 	 * <b>post: </b> Verification of a letter called in a production is done. <br>
 	 * @param letter - Letter in the grammar - letter = char, tf != null
 	 * @return A boolean with true if the letter is called in a production, otherwise with false.
-    */
-	private boolean existInProductions(char letter) {
-		for (int i = 0; i < grammar.size(); i++) {
-			String[] letters = ((JFXTextField) grammar.get(i)[1]).getText().split("|");
-			for (int j = 0; j < letters.length; j++) {
-				if (letters[j].equals(letter + ""))
-					return true;
+	 */
+	private boolean existInProductions(char letter, char init) {
+		ArrayList<Character> achievable = new ArrayList<Character>();
+		achievable.add(init);
+		ArrayList<Character> nonTerminals = obtainNonTerminals();
+		for (int i = nonTerminals.indexOf(init); i < nonTerminals.size(); i++) {
+			String[] productions = ((JFXTextField)grammar.get(i)[1]).getText().split("|");
+			for(int j = 0; j < productions.length && achievable.contains(nonTerminals.get(i)); j++) {
+				if(!productions[j].equals("") && Character.isUpperCase(productions[j].charAt(0)))
+					achievable.add(productions[j].charAt(0));
 			}
+
 		}
-		return false;
+		return achievable.contains(letter);
 	}
 
 	/**
-     * Name: configureNewTextField <br>
-     * <br> Private method used to configure a new text field added in the GUI. <br><br>
+	 * Name: checkTerminalVariables <br>
+	 * <br> Private method used to check that a variable is a terminal variable. <br><br>
+	 * <b>post: </b> Verification of a variable that is or not a terminal variable is performed. <br>
+	 */
+	private void checkTerminalVariables() {
+		if(obtainProductions() != null) {
+			ArrayList<Character> terminalVariables = new ArrayList<Character>();
+			ArrayList<Character> variables = obtainNonTerminals();
+			for (int i = 0; i < variables.size(); i++) {
+				String[] productions = ((JFXTextField)grammar.get(i)[1]).getText().split("|");
+				for(int j = 0; j < productions.length; j++) {
+					if(!productions[j].equals("") && (Character.isLowerCase(productions[j].charAt(0)) || productions[j].charAt(0) == '&')) {
+						terminalVariables.add(variables.get(i));
+						j = productions.length;
+					}
+				}
+			}
+			for(int i = variables.size()-1; i >= 0; i--) {
+				if(!terminalVariables.contains(variables.get(i))) {
+					ArrayList<String> binary = getBinaryProductions(i);
+					for(int j = 0; j<binary.size(); j++) {
+						if(terminalVariables.contains(binary.get(j).charAt(0)) && terminalVariables.contains(binary.get(j).charAt(1))) {
+							if(terminalVariables.add(variables.get(i))) {
+								i = terminalVariables.size();
+							}
+						}
+					}
+				}
+			}
+			for(int i = 0; i < grammar.size(); i++) {
+				if(!terminalVariables.contains(((Label)grammar.get(i)[0]).getText().charAt(0))) {
+					((Label)grammar.get(i)[0]).setStyle("-fx-font-family: Consolas; -fx-font-size: 24px; -fx-text-fill: red");
+					((JFXTextField)grammar.get(i)[1]).setStyle("-fx-font-family: Consolas; -fx-font-size: 24px; -fx-text-fill: red");
+				} else {
+					((Label)grammar.get(i)[0]).setStyle("-fx-font-family: Consolas; -fx-font-size: 24px; -fx-text-fill: black");
+					((JFXTextField)grammar.get(i)[1]).setStyle("-fx-font-family: Consolas; -fx-font-size: 24px; -fx-text-fill: black");
+				}
+			}
+			if(terminalVariables.size() == variables.size()) {
+				result.setText("Cool, this is a CNF grammar!");
+				result.setStyle("-fx-font-family: Consolas; -fx-font-size: 24px; -fx-text-fill: green; -fx-font-weight: bold");
+				CYKButton.setDisable(false);
+			} else {
+				result.setText("Not a CNF grammar!");
+				result.setStyle("-fx-font-family: Consolas; -fx-font-size: 24px; -fx-text-fill: red; -fx-font-weight: bold");
+				CYKButton.setDisable(true);
+			}
+		} else {
+			result.setText("Incomplete CNF grammar!");
+			result.setStyle("-fx-font-family: Consolas; -fx-font-size: 24px; -fx-text-fill: gold; -fx-font-weight: bold");
+			CYKButton.setDisable(true);
+		}
+	}
+
+	/**
+	 * Name: getBinaryProductions <br>
+	 * <br> Private method used to get the binary productions of a specified variable. <br><br>
+	 * <b>pre: </b> The variable in question already exists in the grammar list. <br>
+	 * <b>post: </b> The binary productions of the specified variable are obtained. <br>
+	 * @param index - Index of the variable in the grammar list - index = int, index != null, index range: between 0 and grammar.size()
+	 * @return An ArrayList of String with the binary productions of the specified variable.
+	 */
+	private ArrayList<String> getBinaryProductions(int index) {
+		ArrayList<String> binary = new ArrayList<>();
+		String[] productions = ((JFXTextField) grammar.get(index)[1]).getText().split("\\|");
+		for(int i = 0; i < productions.length; i++) {
+			if(productions[i].length() == 2)
+				binary.add(productions[i]);
+		}
+		return binary;
+	}
+
+	/**
+	 * Name: configureNewTextField <br>
+	 * <br> Private method used to configure a new text field added in the GUI. <br><br>
 	 * <b>pre: </b> A new text field has been generated in the GUI. <br><br>
 	 * <b>post: </b> The new text field added in the GUI is configured. <br>
 	 * @return A JFXTextField with all the necessary configuration to deal with different stimulus.
-    */
+	 */
 	private JFXTextField configureNewTextField() {
 		JFXTextField tf = new JFXTextField("") {
 
@@ -254,12 +338,12 @@ public class CYKGUI {
 	}
 
 	/**
-     * Name: additionalProductionsProperties <br>
-     * <br> Private method used to add production verification properties to a text field. <br><br>
+	 * Name: additionalProductionsProperties <br>
+	 * <br> Private method used to add production verification properties to a text field. <br><br>
 	 * <b>pre: </b> A new variable has been written in the GUI. <br><br>
 	 * <b>post: </b> Production verification properties are added to a text field. <br>
 	 * @param tf - Text field from the GUI - tf = JFXTextField, tf != null
-    */
+	 */
 	private void additionalProductionsProperties(JFXTextField tf) {
 		tf.focusedProperty().addListener((observable, oldValue, newValue) -> {
 			checkEndProductions(tf);
@@ -273,6 +357,7 @@ public class CYKGUI {
 				}
 			}
 			rebuildGridPane();
+			checkTerminalVariables();
 		});
 		tf.setOnKeyReleased(new EventHandler<KeyEvent>() {
 			@Override
@@ -292,17 +377,17 @@ public class CYKGUI {
 	}
 
 	/**
-     * Name: additionalStringProperties <br>
-     * <br> Private method used to add verification properties of the input string to a text field. <br><br>
+	 * Name: additionalStringProperties <br>
+	 * <br> Private method used to add verification properties of the input string to a text field. <br><br>
 	 * <b>pre: </b> A new variable has been written in the GUI. <br><br>
 	 * <b>post: </b> Verification properties of the input string are added to a text field. <br>
 	 * @param tf - Text field from the GUI - tf = JFXTextField, tf != null
-    */
+	 */
 	private void additionalStringProperties(JFXTextField tf) {
 		tf.setOnKeyReleased(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
-				if (KeyCode.ENTER == event.getCode())
+				if (KeyCode.ENTER == event.getCode() && !CYKButton.isDisable())
 					doCYKAlgorithm();
 			}
 		});
@@ -315,11 +400,11 @@ public class CYKGUI {
 	}
 
 	/**
-     * Name: verifyString <br>
-     * <br> Private method used to check the input string as it is typed. <br><br>
+	 * Name: verifyString <br>
+	 * <br> Private method used to check the input string as it is typed. <br><br>
 	 * <b>post: </b> The input string is checked as it is typed. <br>
 	 * @param event - Event representing the entering of a key in the string text field - event = KeyEvent
-    */
+	 */
 	private void verifyString(KeyEvent event) {
 		String st = event.getCharacter();
 		if (event.getCharacter().length() != 1)
@@ -335,11 +420,11 @@ public class CYKGUI {
 	}
 
 	/**
-     * Name: checkRepeatedProductions <br>
-     * <br> Private method used to remove repeated productions in a text field. <br><br>
+	 * Name: checkRepeatedProductions <br>
+	 * <br> Private method used to remove repeated productions in a text field. <br><br>
 	 * <b>post: </b> The repeated productions in a text field are removed. <br>
 	 * @param tf - Text field from the GUI - tf = JFXTextField, tf != null
-    */
+	 */
 	private void checkRepeatedProductions(JFXTextField tf) {
 		if (tf.getText() != null && !tf.getText().equals("")) {
 			String[] productions = tf.getText().split("\\|");
@@ -360,11 +445,11 @@ public class CYKGUI {
 	}
 
 	/**
-     * Name: checkEndProductions <br>
-     * <br> Private method used to remove characters that aren't suitable to end a text field. <br><br>
+	 * Name: checkEndProductions <br>
+	 * <br> Private method used to remove characters that aren't suitable to end a text field. <br><br>
 	 * <b>post: </b> Characters that aren't suitable to end a text field are removed. <br>
 	 * @param tf - Text field from the GUI - tf = JFXTextField, tf != null
-    */
+	 */
 	private void checkEndProductions(JFXTextField tf) {
 		if (tf.getText() != null) {
 			int lg = tf.getText().length();
@@ -379,13 +464,13 @@ public class CYKGUI {
 	}
 
 	/**
-     * Name: autoGenerateSpace <br>
-     * <br> Private method used to autogenerate a new text field to write new variable productions. <br><br>
+	 * Name: autoGenerateSpace <br>
+	 * <br> Private method used to autogenerate a new text field to write new variable productions. <br><br>
 	 * <b>pre: </b> A new variable has been written in the GUI. <br><br>
 	 * <b>post: </b> A new text field is autogenerated to write new variable productions on it. <br>
 	 * @param letter - New variable written in a previous variable production - letter = char, letter != null
 	 * @param row - Row where the text field is going to be inserted in the gridPane - row = int, row != null
-    */
+	 */
 	private void autoGenerateSpace(char letter, int row) {
 		Label lb = nonTerminalLabel(letter);
 		JFXTextField tf = configureNewTextField();
@@ -400,13 +485,13 @@ public class CYKGUI {
 	}
 
 	/**
-     * Name: containsInGrammar <br>
-     * <br> Private method used to check that a variable is contained in the grammar. <br><br>
+	 * Name: containsInGrammar <br>
+	 * <br> Private method used to check that a variable is contained in the grammar. <br><br>
 	 * <b>pre: </b> A new variable has been written in the GUI. <br><br>
 	 * <b>post: </b> Verification of a variable contained in the grammar is done. <br>
 	 * @param letter - Variable to verify - letter = char, letter != null
 	 * @return A boolean with true if the variable is contained in the grammar, otherwise with false.
-    */
+	 */
 	private boolean containsInGrammar(char letter) {
 		for (int i = 0; i < grammar.size(); i++) {
 			Label lb = (Label) grammar.get(i)[0];
@@ -417,13 +502,13 @@ public class CYKGUI {
 	}
 
 	/**
-     * Name: nonTerminalLabel <br>
-     * <br> Private method used to create the label of a variable. <br><br>
+	 * Name: nonTerminalLabel <br>
+	 * <br> Private method used to create the label of a variable. <br><br>
 	 * <b>pre: </b> A new variable has been written in the GUI. <br><br>
 	 * <b>post: </b> The label of a variable is created. <br>
 	 * @param letter - Variable to create the label - letter = char, letter != null
 	 * @return A Label representing a variable.
-    */
+	 */
 	private Label nonTerminalLabel(char letter) {
 		Label lb = new Label(letter + " -> ");
 		setStyle(lb);
@@ -431,23 +516,23 @@ public class CYKGUI {
 	}
 
 	/**
-     * Name: setStyle <br>
-     * <br> Private generic method used to apply CSS style to Controls in general (Labels and Text Fields). <br><br>
+	 * Name: setStyle <br>
+	 * <br> Private generic method used to apply CSS style to Controls in general (Labels and Text Fields). <br><br>
 	 * <b>pre: </b> A new variable has been written in the GUI. <br><br>
 	 * <b>post: </b> CSS style is applied to Controls in general (Labels and Text Fields). <br>
 	 * @param control - Any type of control - control = Type that extends Control, letter != null
-    */
+	 */
 	private <Type extends Control> void setStyle(Type control) {
 		control.setStyle("-fx-font-family: Consolas; -fx-font-size: 24px");
 	}
 
 	/**
-     * Name: verifyProductions <br>
-     * <br> Private method used to check productions as they are typed. <br><br>
+	 * Name: verifyProductions <br>
+	 * <br> Private method used to check productions as they are typed. <br><br>
 	 * <b>post: </b> The input productions are checked as they are typed. <br>
 	 * @param textField - Text field from the GUI - textField = JFXTextField, textField != null
 	 * @param event - Event representing the entering of a key in a productions text field - event = KeyEvent
-    */
+	 */
 	private void verifyProductions(JFXTextField textField, KeyEvent event) {
 		String oldText = textField.getText();
 		int oldLength = oldText.length();
@@ -460,6 +545,8 @@ public class CYKGUI {
 			if (oldLength == 0) {
 				if (newCharacter != '|')
 					consume = false;
+				if(newCharacter == '&' && !grammar.get(0)[1].equals(textField))
+					consume = true;
 			} else if (oldLength == 1) {
 				char lastOldCharacter = oldText.charAt(oldLength - 1);
 				if (Character.isUpperCase(lastOldCharacter)) {
